@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col s12 m4">
+            <div class="card">
+                <div class="card-image">
+                    {% if user.image %}
+                        <img src="{{ user.image.url }}" alt="">
+                    {% endif %}
+                </div>
+                <div class="card-content">
+                    <div class="card-title">{{ user.name }}</div>
+                    <p>이메일 : {{ user.email }}</p>
+                    <p>게시물 : {{ users_posts_count }}</p>
+                    <p>팔로워 : 3</p>
+                    <p>팔로잉 : 3</p>
+
+                    <a href="{% url 'posts:new' %}" class='btn'>글쓰기</a>
+                </div>
+            </div>
+        </div>
+        <div class="col s12 m8">
+            {% for post in posts %}
+                <div class="card post">
+                    <div class="card-content">
+                        <div class="card-title">
+                            {% if post.user.image %}
+                                <img src="{{ post.user.image.url }}" alt="" class="circle thumbnail">
+                            {% endif %}
+                            <span>{{ post.user.name }}</span>
+                            <span class="time_font_size right">{{ post.created_at }}</span>
+                        </div>
+                        <div class="content">
+                            {% if user.is_authenticated and user != post.user %}
+                                <a href="#" class="btn right">팔로우</a>
+                            {% endif %}
+                            <div class="card-image">
+                                {% if post.image %}
+                                    <img src="{{ post.image.url }}" alt="">
+                                {% endif %}
+                            </div>
+                            <p class="pre-line">{{ post.content }}</p>
+                        </div>
+
+                    </div>
+                    <div class="card-action">
+                        <div class="votes-count" data-id="<%= post.id %>">
+                            5명이 좋아합니다.
+                            <a href="#">좋아요</a>
+                            {% if user == post.user %}
+                                <form action="{% url 'posts:delete' post.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="submit" class="right btn" value="삭제">
+                                </form>
+                                <a href="{% url 'posts:edit' post.id %}" class="right btn" style="margin-right: 8px;">수정</a>
+                            {% endif %}
+                        </div>
+
+                        <form action="{% url 'posts:comment_create' post_id=post.id %}" method="POST">
+                            <div class="input-field">
+                                {% csrf_token %}
+                                {{ comment_form|crispy }}
+                            </div>
+                            <div class="input-field">
+                                <input type="submit" class="btn" value="댓글 쓰기">
+                            </div>
+                        </form>
+
+                        {% if post.comments %}
+                            <ul class="collection">
+                                {% for comment in post.comments %} 
+                                    <li class="collection-item" style="padding-bottom: 28px;">
+                                        <span class="title">{{ comment.user.name }}</span>
+                                        <span class="right">{{ comment.created_at }}</span>
+                                        <p class="pre-line">{{ comment.body }}</p>
+                                        {% if comment.user == user %}
+                                            <div class="right">
+                                                삭제
+                                            </div>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>                
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+    

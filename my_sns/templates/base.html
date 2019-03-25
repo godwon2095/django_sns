@@ -1,0 +1,100 @@
+{% load static i18n %}<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{% block title %}my_sns{% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
+
+    {% block css %}
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    
+
+    <!-- Your stuff: Third-party CSS libraries go here -->
+    
+    <!-- This file stores project-specific CSS -->
+    
+    <link href="{% static 'css/project.css' %}" rel="stylesheet">
+    
+    
+    {% endblock %}
+
+  </head>
+
+  <body>
+    <nav>
+      <div class="nav-wrapper">
+        <a href="{% url 'home' %}" class="brand-logo">SNS</a>
+        <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        <ul class="right hide-on-med-and-down">
+          {% if request.user.is_authenticated %}
+            <li><a href="{% url 'posts:new' %}">글작성</a></li>
+          <!-- users:detail 에서 users 네임스페이스 -->
+            <li><a href="{% url 'users:detail' request.user.username  %}">마이페이지</a></li>
+            <li><a href="{% url 'account_logout' %}">로그아웃</a></li>
+          {% else %}
+            <li><a href="{% url 'account_signup' %}">회원가입</a></li>
+            <li><a href="{% url 'account_login' %}">로그인</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+  
+    <ul class="sidenav" id="mobile-demo">
+      {% if request.user.is_authenticated %}
+        <li><a href="{% url 'users:detail' request.user.username  %}">마이페이지</a></li>
+        <li><a href="{% url 'account_logout' %}">로그아웃</a></li>
+      {% else %}
+        <li><a href="{% url 'account_signup' %}">회원가입</a></li>
+        <li><a href="{% url 'account_login' %}">로그인</a></li>
+      {% endif %}
+    </ul>
+   
+
+    <div class="container">
+
+      {% if messages %}
+          {% for message in messages %}
+              <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+          {% endfor %}
+      {% endif %}
+
+      {% block content %}
+      {% endblock content %}
+
+    </div> <!-- /container -->
+
+    {% block modal %}{% endblock modal %}
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    {% block javascript %}
+      
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+      <!-- Your stuff: Third-party javascript libraries go here -->
+      
+
+      <!-- place project specific Javascript in this file -->
+      
+      <script src="{% static 'js/project.js' %}"></script>
+      
+
+    {% endblock javascript %}
+  </body>
+</html>
+ 
